@@ -1,0 +1,80 @@
+@import  url(//fonts.googleapis.com/css?family=Open+Sans:400,700);
+
+html, body{
+  box-sizing: border-box;
+  font-family: 'Open Sans', sans-serif; color: #333;
+  font-style: normal;
+  line-height: 1.4;
+  font-size: 14px;
+  font-weight: 400;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.menu {
+  display:none;
+}
+
+#map {
+  max-width: 100%;
+  height: 900px;
+  z-index: 0;
+}
+
+.nav {
+  z-index: 10;
+  width: 250px;
+  position: absolute;
+  margin-top: 50px;
+  margin-left: 10px;
+  padding: 5px;
+  background-color: #ccc;
+  border: #ccc 1px solid;
+  border-radius: 25px 25px;
+}
+
+ul li {
+  list-style: none;
+  margin-left: -25px;
+}
+
+.infowindow {
+  display: flex;
+  width: 400px;
+}
+
+.infowindow span{
+    padding: 0px 10px 0px 10px;
+    font-size: large;
+}
+
+@media screen and (max-width: 549px) {
+
+  .nav {
+    font-size: 12px;
+    width: 150px;
+    margin-top: 70px;
+    /* This trasform moves the drawer off canvas. */
+    -webkit-transform: translate(-170px, 0);
+    transform: translate(-170px, 0);
+    /* Optionally, we animate the drawer. */
+    transition: transform 0.3s ease;
+  }
+
+  .nav.open {
+    -webkit-transform: translate(0, 0);
+    transform: translate(0, 0);
+  }
+
+  .menu {
+    display: block;
+    left: 0;
+    padding: 1em;
+  }
+  .menu svg {
+    width: 32px;
+    fill: #E0E0E0;
+  }
+}
