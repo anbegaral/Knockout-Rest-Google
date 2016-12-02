@@ -8,8 +8,12 @@
 </head>
 <body>
   <nav id="drawer" class="nav">
+      <h5>Filter the results:</h5>
+      <div class="search">
+        <input type="text" id="lookup" name="lookup" data-bind="value: filter, valueUpdate: 'afterkeydown'" />
+      </div>
       <h5>Check to select your favourites houses:</h5>
-      <ul class="selection" data-bind="foreach: houseArray">
+      <ul class="selection" data-bind="foreach: filterHouses">
         <li>
           <input type="checkbox" data-bind="checked: fav, click:$parent.updatingfavourites">
           <span data-bind="text: address"></span></li>
@@ -28,49 +32,57 @@
           <input type="checkbox" id="shopping_mall" />
           <label for="markets">Markets</label>
         </li>
+        <li>
+          <input type="checkbox" id="beaches" />
+          <label for="beaches">Beaches</label>
+        </li>
       </ul>
   </nav>
   <main>
-    <a id="menu" class="menu">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path d="M2 6h20v3H2zm0 5h20v3H2zm0 5h20v3H2z"></path>
-      </svg>
-    </a>
+    <div id="menu">
+      <a class="menu">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M2 6h20v3H2zm0 5h20v3H2zm0 5h20v3H2z"></path>
+        </svg>
+      </a>
+    </div>
     <div id="map"></div>
       <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyC4dYdTtAuclPLAGpEg-1UQ947LrilnwkI&v=3&callback=view.initMap"></script>
     <div class="infowindow">
-      <div class="head clearfix">
-        <div class="picture">
-          <img class="bgimg" alt="House picture" src="">
+      <div class="address"></div>
+      <div class="content">
+        <div class="head">
+          <div class="data">
+            <ul>
+              <li class="bed"> </li>
+              <li class="bath"> </li>
+              <li class="ensuite"> </li>
+              <li class="garage"> </li>
+              <li class="price"> </li>
+            </ul>
+          </div>
+          <div class="picture">
+            <img class="bgimg" alt="House picture" src="">
+          </div>
         </div>
-        <div class="address">
-          <h2></h2>
-          <ul class="data">
-            <li class="bed"> </li>
-            <li class="bath"> </li>
-            <li class="ensuite"> </li>
-            <li class="price"> </li>
-          </ul>
-        </div>
+        <div class="description"></div>
+        <div class="street"></div>
       </div>
-      <div class="description">
-      </div>
-      <div class="street">
-      </div>
+      <div class="iw-bottom-gradient"></div>
     </div>
     <div class="infowindowservice">
-      <div class="head clearfix">
-        <div class="picture">
-          <img class="bgimg" alt="Service picture" src="">
-        </div>
-        <div class="address">
-          <h2></h2>
+      <div class="address"></div>
+      <div class="content">
+        <div class="head">
+          <div class="pictureservice">
+            <img class="bgimgservice" alt="Service picture" src="">
+          </div>
         </div>
       </div>
     </div>
   </main>
     <script src="js/libs/jquery.min.js"></script>
-    <script src="js/libs/knockout-3.4.0.js"></script>
+    <script src="js/libs/knockout-3.4.1.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
