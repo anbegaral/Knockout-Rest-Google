@@ -23,8 +23,8 @@ gulp.task('copy', function(){
     .pipe(gulp.dest('./dist/js/libs/'));
   gulp.src('./css/libs/*.css')
     .pipe(gulp.dest('./dist/css/libs/'));
-  gulp.src('./images/*.*')
-    .pipe(gulp.dest('./dist/images/*.*'));
+  gulp.src('./images/*.png')
+    .pipe(gulp.dest('./dist/images/'));
 });
 
 gulp.task('default', ['uglify', 'minify-css', 'copy']);
