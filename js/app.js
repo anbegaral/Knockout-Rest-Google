@@ -1,3 +1,4 @@
+'use strict';
 var model = {
   houses: [
     {
@@ -530,9 +531,13 @@ var ViewModel = {
         if (status == google.maps.places.PlacesServiceStatus.OK) {
           view.showServicesMarkers(results, service);
         }else if(status == google.maps.places.PlacesServiceStatus.ZERO_RESULTS){
-          alert("No results");
+          $('#alert .modal-title').html('Google Places results');
+          $('#alert .modal-body').html('<p>No results.</p>');
+          $('#alert').modal('show');
         }else{
-          alert("There was an error " + status);
+          $('#alert .modal-title').html('Google Places results');
+          $('#alert .modal-body').html('<p>An error ocurred: ' + status+'.</p>');
+          $('#alert').modal('show');
         }
       });
     } else {
@@ -541,6 +546,19 @@ var ViewModel = {
   },
   //getting the beaches in the area using Foursquare API
   getBeaches: function(){
+    //function formats current date to be used in parameter v in Foursquare ajax call
+    Date.prototype.yyyymmdd = function() {
+      var mm = this.getMonth() + 1; // getMonth() is zero-based
+      var dd = this.getDate();
+      return [this.getFullYear(),
+              (mm > 9 ? '' : '0') + mm,
+              (dd > 9 ? '' : '0') + dd
+             ].join('');
+    };
+
+    var date = new Date();
+    date.yyyymmdd();
+    //if checkbox is checked
     if (document.getElementById('beaches').checked) {
       var foursquareURL = 'https://api.foursquare.com/v2/venues/search';
       $.ajax({
@@ -549,17 +567,26 @@ var ViewModel = {
         data: {'ll': view.map.getCenter().lat() + "," + view.map.getCenter().lng(),
          'client_id': 'BRBMAYIFF3TVSAJ3AKGSBNXCWYOOLYYZVHRODRYXVIUS4211',
          'client_secret': 'ZCTIVDJXJEEXNFZ3SBF4JDYH1KXAPDQVS1TBINFNZOCST2VG',
-         'v': '20161201',
+         'v': date.yyyymmdd(),
          'limit': 20,
+         'radius': 10000,
          'categoryId': '4d4b7105d754a06377d81259'
        }
-      }).done(function(data, statusText){
-        if(statusText === 'success'){
-          view.showBeaches(data.response.venues);
-        }else{
-          alert('There was a problem retrieving the data from FourSquare.')
-        }
+     }).done(function(data, statusText){
+          if(data.response.venues.length > 0){
+            view.showBeaches(data.response.venues);
+          //if results length is 0
+          }else{
+            $('#alert .modal-title').html('Foursquare results');
+            $('#alert .modal-body').html('<p>No results.</p>');
+            $('#alert').modal('show');
+          }
+      }).fail(function(){
+        $('#alert .modal-title').html('Foursquare results');
+        $('#alert .modal-body').html('<p>An error ocurred: ' + statusText + '.</p>');
+        $('#alert').modal('show');
       });
+    //if checkbox is unchecked
     }else{
       view.hideServicesMarkers('beaches');
     }
@@ -639,12 +666,11 @@ var view = {
     var self = this;
     var marker;
     var bounds = new google.maps.LatLngBounds();
-    //Gathering the data from ViewModel
+    //Parameter passing the data from ViewModel
     var locations = arrayLocations;
     var infowindow = new google.maps.InfoWindow();
 
     for (var i = 0; i < locations.length; i++) {
-
       //depending on fav attribute the marker icon is different
       if(locations[i].fav()){
         self.marker = self.createMarker(view.map,locations[i].coords, locations[i].address,'images/star-3.png', locations[i].id);
@@ -715,7 +741,7 @@ var view = {
   },
   //setting the content of the infowindow
   setInfoWindows: function(marker, infowindow, house, service){
-
+    //close the infowindow
     infowindow.addListener('closeclick', function(){
       infowindow.marker = null;
     });
@@ -748,10 +774,10 @@ var view = {
       // Reference to the div that groups the close button elements.
       var iwCloseBtn = iwOuter.next();
       // Apply the desired effect to the close button
-      iwCloseBtn.css({opacity: '1', right: '38px', top: '3px', border: '7px solid #48b5e9', 'border-radius': '13px', 'box-shadow': '0 0 5px #3990B9'});
+      iwCloseBtn.css({opacity: '1', right: '40px', top: '3px', border: '1px solid #48b5e9', 'border-radius': '5px', 'box-shadow': '0 0 5px #3990B9'});
       // The API automatically applies 0.7 opacity to the button after the mouseout event. This function reverses this event to the desired value.
       iwCloseBtn.mouseout(function(){
-        $(this).css({opacity: '1'});
+        $(this).css({opacity: '0.5'});
       });
 
       // If the content of infowindow not exceed the set maximum height, then the gradient is removed.

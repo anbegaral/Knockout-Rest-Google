@@ -4,37 +4,35 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Your moving guide</title>
+  <link rel="stylesheet" href="css/libs/bootstrap.min.css">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
   <nav id="drawer" class="nav">
       <h5>Filter the results:</h5>
       <div class="search">
-        <input type="text" id="lookup" name="lookup" data-bind="value: filter, valueUpdate: 'afterkeydown'" />
+        <input type="text" class="form-control" id="lookup" name="lookup" data-bind="value: filter, valueUpdate: 'afterkeydown'" placeholder="Search"/>
       </div>
       <h5>Check to select your favourites houses:</h5>
       <ul class="selection" data-bind="foreach: filterHouses">
-        <li>
+        <li class="checkbox">
           <input type="checkbox" data-bind="checked: fav, click:$parent.updatingfavourites">
-          <span data-bind="text: address"></span></li>
+          <label data-bind="text: address"></label>
+        </li>
       </ul>
       <h5>Select the services you want to show:</h5>
-      <ul class="options">
-        <li>
-          <input type="checkbox" id="school" />
-          <label for="schools">Schools</label>
+      <ul>
+        <li class="checkbox">
+          <label for="schools"><input type="checkbox" id="school" />Schools</label>
         </li>
-        <li>
-          <input type="checkbox" id="doctor" />
-          <label for="medical">Medical centers</label>
+        <li class="checkbox">
+          <label for="medical"><input type="checkbox" id="doctor" />Medical centers</label>
         </li>
-        <li>
-          <input type="checkbox" id="shopping_mall" />
-          <label for="markets">Markets</label>
+        <li class="checkbox">
+          <label for="markets"><input type="checkbox" id="shopping_mall" />Markets</label>
         </li>
-        <li>
-          <input type="checkbox" id="beaches" />
-          <label for="beaches">Beaches</label>
+        <li class="checkbox">
+          <label for="beaches"><input type="checkbox" id="beaches" />Beaches</label>
         </li>
       </ul>
   </nav>
@@ -48,6 +46,7 @@
     </div>
     <div id="map"></div>
       <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyC4dYdTtAuclPLAGpEg-1UQ947LrilnwkI&v=3&callback=view.initMap"></script>
+    <!-- infowindow for houses -->
     <div class="infowindow">
       <div class="address"></div>
       <div class="content">
@@ -70,6 +69,7 @@
       </div>
       <div class="iw-bottom-gradient"></div>
     </div>
+    <!-- infowindow for services -->
     <div class="infowindowservice">
       <div class="address"></div>
       <div class="content">
@@ -80,9 +80,25 @@
         </div>
       </div>
     </div>
+    <!-- Modal -->
+  <div id="alert" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title"></h4>
+        </div>
+        <div class="modal-body"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
   </main>
     <script src="js/libs/jquery.min.js"></script>
     <script src="js/libs/knockout-3.4.1.js"></script>
+    <script src="js/libs/bootstrap.min.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

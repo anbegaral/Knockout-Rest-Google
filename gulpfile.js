@@ -1,19 +1,18 @@
 var gulp = require('gulp');
 var uglify = require('gulp-uglify');
-var concat = require('gulp-concat');
+var cssmin = require('gulp-cssmin');
 var cleanCss = require('gulp-clean-css');
 
-gulp.task('uglify-concat', function(){
+gulp.task('uglify', function(){
   gulp.src('./js/*.js')
-    .pipe(uglify({'mangle': false}))
-    .pipe(concat('project5.min.js'))
+    .pipe(uglify().on('error', function(e){console.log(e);}))
     .pipe(gulp.dest('./dist/js/'));
 });
 
 gulp.task('minify-css', function(){
   gulp.src('./css/*.css')
     .pipe(cleanCss())
-    .pipe(concat('project5.min.css'))
+    .pipe(cssmin().on('error', function(e){console.log(e);}))
     .pipe(gulp.dest('./dist/css/'));
 });
 
@@ -22,8 +21,10 @@ gulp.task('copy', function(){
     .pipe(gulp.dest('./dist/'));
   gulp.src('./js/libs/*.js')
     .pipe(gulp.dest('./dist/js/libs/'));
+  gulp.src('./css/libs/*.css')
+    .pipe(gulp.dest('./dist/css/libs/'));
   gulp.src('./images/*.*')
     .pipe(gulp.dest('./dist/images/*.*'));
 });
 
-gulp.task('default', ['uglify-concat', 'minify-css', 'copy']);
+gulp.task('default', ['uglify', 'minify-css', 'copy']);

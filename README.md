@@ -9,6 +9,6 @@ The site pretends to be a guide for a house buyer looking for a house in a neigh
 The site is built using Google Maps, Google Places, Google StreetView and Foursquare as 3rd party API.
 
 ##Libraries used
-- knockout
+- Knockout
 - Bootstrap
 - JQuery
