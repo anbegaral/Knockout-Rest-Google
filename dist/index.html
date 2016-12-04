@@ -4,6 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Your moving guide</title>
+  <!-- Loading the API before the dom-->
+  <script src="js/libs/jquery.min.js"></script>
+  <script src="js/libs/knockout-3.4.1.js"></script>
+  <script src="js/libs/bootstrap.min.js"></script>
+  <script src="js/app.js"></script>
   <link rel="stylesheet" href="css/libs/bootstrap.min.css">
   <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -45,7 +50,7 @@
       </a>
     </div>
     <div id="map"></div>
-      <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyC4dYdTtAuclPLAGpEg-1UQ947LrilnwkI&v=3&callback=view.initMap"></script>
+      <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyAxFFX52TgEAWoFagFG2lgzIcwoC7WUolc&v=3&callback=view.initMap"></script>
     <!-- infowindow for houses -->
     <div class="infowindow">
       <div class="address"></div>
@@ -96,9 +101,5 @@
     </div>
   </div>
   </main>
-    <script src="js/libs/jquery.min.js"></script>
-    <script src="js/libs/knockout-3.4.1.js"></script>
-    <script src="js/libs/bootstrap.min.js"></script>
-    <script src="js/app.js"></script>
 </body>
 </html>
