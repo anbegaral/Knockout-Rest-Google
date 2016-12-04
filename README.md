@@ -12,3 +12,6 @@ The site is built using Google Maps, Google Places, Google StreetView and Foursq
 - Knockout
 - Bootstrap
 - JQuery
+
+##URL Demo
+http://ana.northeurope.cloudapp.azure.com/project5/
