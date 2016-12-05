@@ -614,6 +614,9 @@ var view = {
                 position: google.maps.ControlPosition.TOP_RIGHT
             }
     });
+    //calling the data once the map is loaded
+    ko.applyBindings(new ViewModel.init());
+    
     //creating the markers
     this.setMarkers(ViewModel.houseArray());
 
@@ -712,6 +715,7 @@ var view = {
   updateMarker: function(house){
     var self = this;
     var infowindow = new google.maps.InfoWindow();
+    var marker;
     //Select the marker of the selected house
     var indexSelected;
     for (var i = 0; i < view.markers.length; i++) {
@@ -741,11 +745,7 @@ var view = {
   },
   //setting the content of the infowindow
   setInfoWindows: function(marker, infowindow, house, service){
-    //close the infowindow
-    infowindow.addListener('closeclick', function(){
-      infowindow.marker = null;
-    });
-
+    
     // *
     //Idea and part of code from http://en.marnoto.com/2014/09/5-formas-de-personalizar-infowindow.html
 
@@ -809,13 +809,19 @@ var view = {
     }
     //adding content to infowindow
     infowindow.setContent(content);
+    //open the infowindow
     if (infowindow.marker != marker) {
       infowindow.open(view.map, marker);
     }
+    //close the infowindow
+    infowindow.addListener('closeclick', function(){
+      infowindow.marker = null;
+    });
   },
   //showing the services markers
   showServicesMarkers: function(results, service){
     var infowindow = new google.maps.InfoWindow();
+    var marker;
     for (var i = 0; i < results.length; i++) {
       var title = results[i].name + " " + results[i].vicinity;
       marker = this.createMarker(view.map,results[i].geometry.location, title, 'images/' + service + '.png', i);
@@ -833,6 +839,7 @@ var view = {
   //showing the beaches
   showBeaches: function(results){
     var infowindow = new google.maps.InfoWindow();
+    var marker;
     for (var i = 0; i < results.length; i++) {
         var coords = {lat: results[i].location.lat, lng: results[i].location.lng};
         var title = results[i].name + " " + results[i].location.address + ", " + results[i].location.city + " " + results[i].location.postalCode;
@@ -867,5 +874,3 @@ var view = {
     }
   }
 }
-
-ko.applyBindings(new ViewModel.init());

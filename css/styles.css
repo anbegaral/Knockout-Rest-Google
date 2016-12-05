@@ -175,7 +175,7 @@ h5 {
     overflow-y: auto;
   }
 
-  .nav .open {
+  .nav.open {
     -webkit-transform: translate(0, 0);
     transform: translate(0, 0);
   }
