@@ -4,15 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Your moving guide</title>
-  <!-- Loading the API before the dom-->
+  <link rel="stylesheet" href="css/libs/bootstrap.min.css">
+  <link rel="stylesheet" href="css/styles.css">
   <script src="js/libs/jquery.min.js"></script>
   <script src="js/libs/knockout-3.4.1.js"></script>
   <script src="js/libs/bootstrap.min.js"></script>
   <script src="js/app.js"></script>
-  <link rel="stylesheet" href="css/libs/bootstrap.min.css">
-  <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
+<body data-bind="keydown: closeInfowindow">
   <nav id="drawer" class="nav">
       <h5>Filter the results:</h5>
       <div class="search">
@@ -25,24 +24,27 @@
           <label data-bind="text: address"></label>
         </li>
       </ul>
-      <h5>Select the services you want to show:</h5>
-      <ul>
-        <li class="checkbox">
-          <label for="schools"><input type="checkbox" id="school" />Schools</label>
-        </li>
-        <li class="checkbox">
-          <label for="medical"><input type="checkbox" id="doctor" />Medical centers</label>
-        </li>
-        <li class="checkbox">
-          <label for="markets"><input type="checkbox" id="shopping_mall" />Markets</label>
-        </li>
-        <li class="checkbox">
-          <label for="beaches"><input type="checkbox" id="beaches" />Beaches</label>
-        </li>
-      </ul>
+      <button id="btnservices" class="btn btn-default btn-lg" data-bind="click: showServices">Show services</button>
+      <div id="divservices" class="services">
+        <ul>
+          <li class="checkbox">
+            <label for="schools"><input type="checkbox" id="school" data-bind="click: getServices('school')"/>Schools</label>
+          </li>
+          <li class="checkbox">
+            <label for="doctor"><input type="checkbox" id="doctor" data-bind="click: getServices('doctor')" />Medical centers</label>
+          </li>
+          <li class="checkbox">
+            <label for="markets"><input type="checkbox" id="shopping_mall" data-bind="click: getServices('shopping_mall')"/>Markets</label>
+          </li>
+          <li class="checkbox">
+            <label for="beaches"><input type="checkbox" id="beaches" data-bind="click: getBeaches()"/>Beaches</label>
+          </li>
+        </ul>
+      </div>
   </nav>
-  <main>
-    <div id="menu">
+  <main data-bind="click: removeMenu">
+    <!-- using clickBubble: false, is the equivalent in Knockout to stopPropagation -->
+    <div id="menu" data-bind="click: showMenu, clickBubble: false">
       <a class="menu">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
           <path d="M2 6h20v3H2zm0 5h20v3H2zm0 5h20v3H2z"></path>
@@ -50,24 +52,20 @@
       </a>
     </div>
     <div id="map"></div>
-      <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyAxFFX52TgEAWoFagFG2lgzIcwoC7WUolc&v=3&callback=view.initMap"></script>
+      <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyC4dYdTtAuclPLAGpEg-1UQ947LrilnwkI&v=3&callback=view.initMap"></script>
     <!-- infowindow for houses -->
     <div class="infowindow">
       <div class="address"></div>
       <div class="content">
-        <div class="head">
-          <div class="data">
-            <ul>
-              <li class="bed"> </li>
-              <li class="bath"> </li>
-              <li class="ensuite"> </li>
-              <li class="garage"> </li>
-              <li class="price"> </li>
-            </ul>
-          </div>
-          <div class="picture">
-            <img class="bgimg" alt="House picture" src="">
-          </div>
+        <img class="bgimg" alt="House picture" src="">
+        <div class="data">
+          <ul>
+            <li class="bed"> </li>
+            <li class="bath"> </li>
+            <li class="ensuite"> </li>
+            <li class="garage"> </li>
+            <li class="price"> </li>
+          </ul>
         </div>
         <div class="description"></div>
         <div class="street"></div>
@@ -78,10 +76,8 @@
     <div class="infowindowservice">
       <div class="address"></div>
       <div class="content">
-        <div class="head">
-          <div class="pictureservice">
-            <img class="bgimgservice" alt="Service picture" src="">
-          </div>
+        <div class="pictureservice">
+          <img class="bgimgservice" alt="Service picture" src="">
         </div>
       </div>
     </div>
