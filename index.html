@@ -24,21 +24,23 @@
           <label data-bind="text: address"></label>
         </li>
       </ul>
-      <h5>Select the services you want to show:</h5>
+      <button id="btnservices" class="btn btn-default btn-lg" data-bind="click: showServices">Show services</button>
+      <div id="divservices" class="services">
         <ul>
           <li class="checkbox">
-            <label for="schools"><input type="checkbox" id="school" data-bind="click: getServices('school')" readonly/>Schools</label>
+            <label for="schools"><input type="checkbox" id="school" data-bind="click: getServices('school')"/>Schools</label>
           </li>
           <li class="checkbox">
-            <label for="doctor"><input type="checkbox" id="doctor" data-bind="click: getServices('doctor')" readonly/>Medical centers</label>
+            <label for="doctor"><input type="checkbox" id="doctor" data-bind="click: getServices('doctor')" />Medical centers</label>
           </li>
           <li class="checkbox">
-            <label for="markets"><input type="checkbox" id="shopping_mall" data-bind="click: getServices('shopping_mall')" readonly/>Markets</label>
+            <label for="markets"><input type="checkbox" id="shopping_mall" data-bind="click: getServices('shopping_mall')"/>Markets</label>
           </li>
           <li class="checkbox">
-            <label for="beaches"><input type="checkbox" id="beaches" data-bind="click: getBeaches()" readonly/>Beaches</label>
+            <label for="beaches"><input type="checkbox" id="beaches" data-bind="click: getBeaches()"/>Beaches</label>
           </li>
         </ul>
+      </div>
   </nav>
   <main data-bind="click: removeMenu">
     <!-- using clickBubble: false, is the equivalent in Knockout to stopPropagation -->
