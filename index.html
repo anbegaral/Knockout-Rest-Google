@@ -11,7 +11,7 @@
   <script src="js/libs/bootstrap.min.js"></script>
   <script src="js/app.js"></script>
 </head>
-<body data-bind="keydown: closeInfowindow">
+<body>
   <nav id="drawer" class="nav">
       <h5>Filter the results:</h5>
       <div class="search">
@@ -24,23 +24,21 @@
           <label data-bind="text: address"></label>
         </li>
       </ul>
-      <button id="btnservices" class="btn btn-default btn-lg" data-bind="click: showServices">Show services</button>
-      <div id="divservices" class="services">
+      <h5>Select the services you want to show:</h5>
         <ul>
           <li class="checkbox">
-            <label for="schools"><input type="checkbox" id="school" data-bind="click: getServices('school')"/>Schools</label>
+            <label for="schools"><input type="checkbox" id="school" data-bind="click: getServices('school')" readonly/>Schools</label>
           </li>
           <li class="checkbox">
-            <label for="doctor"><input type="checkbox" id="doctor" data-bind="click: getServices('doctor')" />Medical centers</label>
+            <label for="doctor"><input type="checkbox" id="doctor" data-bind="click: getServices('doctor')" readonly/>Medical centers</label>
           </li>
           <li class="checkbox">
-            <label for="markets"><input type="checkbox" id="shopping_mall" data-bind="click: getServices('shopping_mall')"/>Markets</label>
+            <label for="markets"><input type="checkbox" id="shopping_mall" data-bind="click: getServices('shopping_mall')" readonly/>Markets</label>
           </li>
           <li class="checkbox">
-            <label for="beaches"><input type="checkbox" id="beaches" data-bind="click: getBeaches()"/>Beaches</label>
+            <label for="beaches"><input type="checkbox" id="beaches" data-bind="click: getBeaches()" readonly/>Beaches</label>
           </li>
         </ul>
-      </div>
   </nav>
   <main data-bind="click: removeMenu">
     <!-- using clickBubble: false, is the equivalent in Knockout to stopPropagation -->
