@@ -34,7 +34,7 @@ html, body{
 .nav {
   z-index: 10;
   width: 250px;
-  height: 600px;
+  height: 690px;
   position: absolute;
   margin-top: 30px;
   margin-left: 10px;
@@ -53,10 +53,6 @@ ul li {
 
 #btnservices {
   margin: 0px 0px 10px 15px;
-}
-
-.services {
-  display: none;
 }
 
 .infowindow {

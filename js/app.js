@@ -603,18 +603,6 @@ var ViewModel = {
         drawer.classList.remove('open');
       }
 
-      //function to show/hide the services
-      this.showServices = function(){
-        $('#divservices').toggleClass('services');
-        $('#school').prop("checked", !$('#school').prop("checked"));
-        $('#doctor').prop("checked", !$('#doctor').prop("checked"));
-        $('#shopping_mall').prop("checked", !$('#shopping_mall').prop("checked"));
-        $('#beaches').prop("checked", !$('#beaches').prop("checked"));
-        $('#btnservices').toggle(this.getServices('school'),view.hideServicesMarkers('school'));
-        $('#btnservices').toggle(this.getServices('doctor'),view.hideServicesMarkers('doctor'));
-        $('#btnservices').toggle(this.getServices('shopping_mall'),view.hideServicesMarkers('shopping_mall'));
-        $('#btnservices').toggle(this.getBeaches(),view.hideServicesMarkers('beaches'));
-      }
   }
 };
 
