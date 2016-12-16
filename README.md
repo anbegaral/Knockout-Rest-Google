@@ -12,7 +12,7 @@ The code is written based in Knockout MVVM pattern, being separated in 3 modules
 - view: where the DOM is managed and the data are displayed to the user
 
 ##Services used
-The site is built using Google Maps, Google Places, Google StreetView and Foursquare as 3rd party API.
+The site is built using **Google Maps, Google Places, Google StreetView** and **Foursquare** as 3rd party API.
 
 ##Libraries used
 - Knockout
@@ -20,18 +20,21 @@ The site is built using Google Maps, Google Places, Google StreetView and Foursq
 - JQuery
 
 ## How it works
-- When the user loads the page a list of properties are displayed on the panel and the Google map. The user can click on the markers and the infowindow is opened showing the information about the selected house.
-- The user can select one house as **favourite** clicking on the checkbox that appears beside the address of the house. The marker of the house is automatically update with **Knockout**
+- When the user loads the page a list of properties are displayed on the panel and the Google map. The user can click on the list of properties and on the markers and the infowindow is opened showing the information about the selected house.
+- The user can select one house as **favourite** clicking on the checkbox that appears beside the address of the house's list. The marker of the house is automatically update with **Knockout**
 - The user can as well **filter** the list of properties introducing a text to be searched for. The list and the map will be updated with **Knockout**
-- The user can show and hide different services clicking on the checkboxes at the end on the list of properties and open the correspondent infowindow clicking on its marker. This information is provided by **Google Places** and **Foursquare**.
+- The user can show and hide different services clicking on the checkboxes at the end on the list of properties and open the correspondent infowindow clicking on its marker. These locations are provided by **Google Places** and **Foursquare** for the beaches.
 - The user can see only one infowindow per service and house, but the application allowes to open few infowindows at the same time if they are different services.
+- The infowindows can be closed clicking on the 'x' button or with the escape key
+
+##3rd party API FOURSQUARE
+The application is getting data from **FOURSQUARE** for displaying the locations of the nearby beaches, name, address and URL when it is available.
 
 ##URL Demo
-http://ana.northeurope.cloudapp.azure.com/project5/
+https://anbegaral.github.io/project5/
 
 ##Installation
 As the project is a website, installation is not required, the user can click on the previous link to display it or copy this repository to a local server (IIS, Tomcat, etc) pointing to `index.html` in `dist` directory and open it on a browser.
 
 ## Minifying code
 The javascript and css code have been minified using **Gulp** tasks.
-
