@@ -460,7 +460,7 @@ var model = {
   updatingHouses: function(house){
     house.fav(house.fav());
   }
-}
+};
 
 var House = function(data){
   this.id = data.id;
@@ -476,7 +476,7 @@ var House = function(data){
   this.photos = data.photos;
   this.price = data.price;
   this.fav = ko.observable(false);
-}
+};
 
 //Create an observable array to used in view and not access directly to model
 var ViewModel = {
@@ -494,7 +494,7 @@ var ViewModel = {
         model.updatingHouses(this);
         view.updateMarker(this);
         return true;
-      }
+      };
 
       //filtering the houses
       this.filter = ko.observable();
@@ -511,97 +511,117 @@ var ViewModel = {
               }
             }
           }
-          view.hideMarkers();
-          view.setMarkers(done);
+          view.filterMarkers(done);
           return done;
       });
 
-      //getting the location of the requested service
+      this.modalTitle = ko.observable();
+      this.modalBody = ko.observable();
+      this.modal = ko.observable(false);
+      self.hideModal = function () {
+        self.modal(false);
+      };
+
+      //array with the services
+      this.chosenServices = ko.observableArray(
+        [
+          {'string':'School', 'label':'school', 'isSelected':ko.observable(true)},
+          {'string':'Doctor', 'label':'doctor', 'isSelected':ko.observable(true)},
+          {'string':'Markets', 'label':'shopping_mall', 'isSelected':ko.observable(true)},
+          {'string':'Beaches (FOURSQUARE provided)', 'label':'beach', 'isSelected':ko.observable(true)}
+        ]
+      );
+
+      //getting the locations of the requested service using Google Places and FOURSQUARE APIs
       this.getServices = function(service){
-        if (document.getElementById(service).checked) {
+        var self = this;
+        //the initial value is false so we need to change it and the first time it is true
+        service.isSelected(!service.isSelected());
+        //Looking for services in Google if it is checked
+        if (service.isSelected() && service.label !== 'beach') {
           var places = new google.maps.places.PlacesService(view.map);
           var latlng = {lat: view.map.getCenter().lat(), lng: view.map.getCenter().lng()};
           var request = {
             location: latlng,
             radius: '1000',
-            types: [service]
+            types: [service.label]
           };
           //using Google Places to search for nearby services
           places.nearbySearch(request, function(results, status){
             if (status == google.maps.places.PlacesServiceStatus.OK) {
-              view.showServicesMarkers(results, service);
+              view.showServicesMarkers(results, service.label);
             }else if(status == google.maps.places.PlacesServiceStatus.ZERO_RESULTS){
-              $('#alert .modal-title').html('Google Places results');
-              $('#alert .modal-body').html('<p>No results looking for "' + service +'".</p>');
-              $('#alert').modal('show');
+              self.modalTitle('Google Places results');
+              self.modalBody('No results looking for "' + service.string +'".');
+              self.modal(true);
             }else{
-              $('#alert .modal-title').html('Google Places results');
-              $('#alert .modal-body').html('<p>An error ocurred: ' + status+'.</p>');
-              $('#alert').modal('show');
+              self.modalTitle('Google Places results');
+              self.modalBody('An error ocurred: ' + status+'.');
+              self.modal(true);
             }
           });
-        } else {
-          view.hideServicesMarkers(service);
-        }
-      }
+        //getting the beaches using FOURSQUARE API
+        } else if (service.isSelected() && service.label === 'beach') {
+          //function formats current date to be used in parameter v in Foursquare ajax call
+          Date.prototype.yyyymmdd = function() {
+            var mm = this.getMonth() + 1; // getMonth() is zero-based
+            var dd = this.getDate();
+            return [this.getFullYear(),
+                    (mm > 9 ? '' : '0') + mm,
+                    (dd > 9 ? '' : '0') + dd
+                   ].join('');
+          };
 
-      //getting the beaches in the area using Foursquare API
-      this.getBeaches = function(){
-        //function formats current date to be used in parameter v in Foursquare ajax call
-        Date.prototype.yyyymmdd = function() {
-          var mm = this.getMonth() + 1; // getMonth() is zero-based
-          var dd = this.getDate();
-          return [this.getFullYear(),
-                  (mm > 9 ? '' : '0') + mm,
-                  (dd > 9 ? '' : '0') + dd
-                 ].join('');
-        };
+          var date = new Date();
+            var foursquareURL = 'https://api.foursquare.com/v2/venues/search';
+            $.ajax({
+              url: foursquareURL,
+              method: 'GET',
+              data: {'ll': view.map.getCenter().lat() + "," + view.map.getCenter().lng(),
+               'client_id': 'BRBMAYIFF3TVSAJ3AKGSBNXCWYOOLYYZVHRODRYXVIUS4211',
+               'client_secret': 'ZCTIVDJXJEEXNFZ3SBF4JDYH1KXAPDQVS1TBINFNZOCST2VG',
+               'v': date.yyyymmdd(),
+               'limit': 20,
+               'radius': 10000,
+               'categoryId': '4d4b7105d754a06377d81259'
+             }
+           }).done(function(data){
+                if(data.response.venues.length > 0){
+                  view.showBeaches(data.response.venues);
+                //if results length is 0
+                }else{
+                  self.modalTitle('Foursquare results');
+                  self.modalBody('No results.');
+                  self.modal(true);
+                }
+            }).fail(function(){
+              self.modalTitle('Foursquare results');
+              self.modalBody('An error ocurred.');
+              self.modal(true);
+            });
+          //hiding the services if checkbox is unchecked
+          }else{
+            view.hideServicesMarkers(service.label);
+            //changes the status of modal to hide
+            this.hideModal();
+          }
+      };
 
-        var date = new Date();
-        //if checkbox is checked
-        if (document.getElementById('beaches').checked) {
-          var foursquareURL = 'https://api.foursquare.com/v2/venues/search';
-          $.ajax({
-            url: foursquareURL,
-            method: 'GET',
-            data: {'ll': view.map.getCenter().lat() + "," + view.map.getCenter().lng(),
-             'client_id': 'BRBMAYIFF3TVSAJ3AKGSBNXCWYOOLYYZVHRODRYXVIUS4211',
-             'client_secret': 'ZCTIVDJXJEEXNFZ3SBF4JDYH1KXAPDQVS1TBINFNZOCST2VG',
-             'v': date.yyyymmdd(),
-             'limit': 20,
-             'radius': 10000,
-             'categoryId': '4d4b7105d754a06377d81259'
-           }
-         }).done(function(data){
-              if(data.response.venues.length > 0){
-                view.showBeaches(data.response.venues);
-              //if results length is 0
-              }else{
-                $('#alert .modal-title').html('Foursquare results');
-                $('#alert .modal-body').html('<p>No results.</p>');
-                $('#alert').modal('show');
-              }
-          }).fail(function(){
-            $('#alert .modal-title').html('Foursquare results');
-            $('#alert .modal-body').html('<p>An error ocurred.</p>');
-            $('#alert').modal('show');
-          });
-        //if checkbox is unchecked
-        }else{
-          view.hideServicesMarkers('beaches');
-        }
-      }
+      //Show the house clicked on the list
+      this.showInfowindow = function(){
+        view.showHouse(this);
+      };
 
       //function to open the panel
-      var drawer = document.querySelector('.nav');
+      this.toggleOpen = ko.observable(false);
       this.showMenu = function() {
-        drawer.classList.toggle('open');
-      }
+        this.toggleOpen(!this.toggleOpen());
+      };
 
-      //function to close the panel
+      //function to close the panel when map is clicked
       this.removeMenu = function() {
-        drawer.classList.remove('open');
-      }
+        this.toggleOpen(false);
+      };
 
   }
 };
@@ -614,6 +634,7 @@ var view = {
   shopping_mallMarkers: [],
   beachesMarkers: [],
   infowindowArray: [],
+  infowindow: {},
 //Initialiasing the map
   initMap: function(){
     var center = {lat: -33.856182, lng: 151.277570};
@@ -627,12 +648,31 @@ var view = {
             }
     });
 
-    //capture the escape key event to close the infowindows
-    $(document).on('keyup',function(evt) {
-        if (evt.keyCode == 27) {
-           view.closeInfowindow();
+    //capture the escape key event to close the infowindows with a ko customised binding
+    ko.bindingHandlers.hotkey = {
+        init: function(element, valueAccessor) {
+          var value = valueAccessor();
+          if (ko.utils.unwrapObservable(value)) {
+            $(document).on("keyup", function(e) {
+              if(e.keyCode == 27) {
+                  view.closeInfowindow();
+              }
+            });
+          }
         }
-    });
+    };
+    //shows/hides the bootstrap modal with a ko customised binding
+    ko.bindingHandlers.showModal = {
+        init: function (element, valueAccessor) {},
+        update: function (element, valueAccessor) {
+            var value = valueAccessor();
+            if (ko.utils.unwrapObservable(value)) {
+                $(element).modal('show');
+            }else{
+                $(element).modal('hide');
+            }
+        }
+    };
 
     //calling the data once the map is loaded
     ko.applyBindings(new ViewModel.init());
@@ -640,6 +680,9 @@ var view = {
     //creating the markers
     this.setMarkers(ViewModel.houseArray());
 
+  },
+  errorMap: function(){
+    alert("Google Maps could not be loaded because an error happened.");
   },
   //create the object google.maps.Marker
   createMarker: function(map, position, title, icon, id){
@@ -660,7 +703,7 @@ var view = {
     var bounds = new google.maps.LatLngBounds();
     //Parameter passing the data from ViewModel
     var locations = arrayLocations;
-    var infowindow = new google.maps.InfoWindow();
+    this.infowindow = new google.maps.InfoWindow();
 
     for (var i = 0; i < locations.length; i++) {
       //depending on fav attribute the marker icon is different
@@ -672,7 +715,7 @@ var view = {
       //populate the markers array
       this.markers.push(self.marker);
       //create the infowindows
-      this.createInfowindow(self.marker, infowindow, locations[i], null);
+      this.createInfowindow(self.marker, this.infowindow, locations[i], null);
 
     }
   //adding the markers to the map
@@ -681,14 +724,20 @@ var view = {
       bounds.extend(view.markers[i].position);
     }
     //Centering the map to the markers
-    this.map.fitBounds(bounds);
+    google.maps.event.addDomListener(window, 'resize', function() {
+      self.map.fitBounds(bounds);
+    });
   },
   //function that hides the markers
-  hideMarkers: function(){
+  filterMarkers: function(array){
+    //hiding all the markers
     for (var i = 0; i < this.markers.length; i++) {
-      this.markers[i].setMap(null);
+      this.markers[i].setVisible(false);
     }
-    this.markers = [];
+    //showing the filtered markers
+    for (var i = 0; i < array.length; i++) {
+      this.markers[i].setVisible(true);
+    }
   },
   //create the infowindows
   createInfowindow: function(marker, infowindow, house, service){
@@ -696,16 +745,36 @@ var view = {
     //adding infowindow to markers
     marker.addListener('click', (function(copyLocations){
       return function(){
-        self.setInfoWindows(this, infowindow, copyLocations, null);
+        self.setInfoWindows(this, infowindow, copyLocations, service);
+        //setting all animations to null and animating the active
+        for(var i = 0; i< self.markers.length;i++){
+          self.markers[i].setAnimation(null);
+        }
+        marker.setAnimation(google.maps.Animation.BOUNCE);
       }
     })(house));
 
+  },
+  showHouse: function(house){
+    //Select the marker of the selected house
+    var indexSelected;
+    for (var i = 0; i < this.markers.length; i++) {
+      if(this.markers[i].id === house.id){
+        indexSelected = i;
+        break;
+      }
+    }
+    var markerSelected = this.markers[indexSelected];
+    for(var i = 0; i< this.markers.length;i++){
+      this.markers[i].setAnimation(null);
+    }
+    markerSelected.setAnimation(google.maps.Animation.BOUNCE);
+    this.setInfoWindows(markerSelected, this.infowindow, house, null);
   },
   //update the marker in case of favourite
   updateMarker: function(house){
     var self = this;
     var marker;
-    var infowindow = new google.maps.InfoWindow();
     //Select the marker of the selected house
     var indexSelected;
     for (var i = 0; i < this.markers.length; i++) {
@@ -731,7 +800,7 @@ var view = {
       this.markers.splice(indexSelected, 0, marker);
     }
     //create the infowindow for the marker
-    this.createInfowindow(marker, infowindow, house, null);
+    this.createInfowindow(marker, this.infowindow, house, null);
   },
   //setting the content of the infowindow
   setInfoWindows: function(marker, infowindow, house, service){
@@ -779,40 +848,54 @@ var view = {
     });
 
     //setting the content
-    var content;
+    var contentString;
     if(house){
       var streetview = 'https://www.google.com/maps/embed/v1/streetview?location=' + house.lat + ',' + house.lng +'&key=AIzaSyC4dYdTtAuclPLAGpEg-1UQ947LrilnwkI';
-      $('.infowindow .bgimg').attr('src', house.photos[1].versions.medium.url);
-      $('.infowindow .address').html(house.address);
-      $('.infowindow .bed').html('Bedrooms: ' + house.bedrooms);
-      $('.infowindow .bath').html('Bathrooms: ' + house.bathrooms);
-      $('.infowindow .ensuite').html('Ensuite: ' + house.ensuite);
-      $('.infowindow .garage').html('Garage spaces: ' + house.garage);
-      $('.infowindow .price').html('Price: $' + house.price);
-      $('.infowindow .description').html(house.description);
-      $('.infowindow .street').html('<iframe src="" class="view" allowfullscreen>Google Streetview could not be loaded.</iframe>');
-      $('.infowindow .view').attr('src', streetview);
-      content = $('.infowindow').html();
+      //infowindow for houses
+      contentString = '<div class="infowindow">' +
+        '<div class="address">' + house.address +'</div>' +
+          '<div class="content">' +
+            '<img class="bgimg" alt="House picture" src="' + house.photos[1].versions.medium.url +'">' +
+            '<div class="data">' +
+              '<ul>' +
+                '<li class="bed">Bedrooms: ' + house.bedrooms + '</li>' +
+                '<li class="bath">Bathrooms: ' + house.bathrooms + '</li>' +
+                '<li class="ensuite">Ensuite: ' + house.ensuite + '</li>' +
+                '<li class="garage">Garage spaces: ' + house.garage + '</li>' +
+                '<li class="price">Price: $' + house.price +'</li>' +
+              '</ul>' +
+            '</div>'+
+            '<div class="description">' + house.description +'</div>' +
+            '<div class="street"><iframe src="' + streetview + '" class="view" allowfullscreen>Google Streetview could not be loaded.</iframe></div>' +
+          '</div>' +
+          '<div class="iw-bottom-gradient"></div>' +
+        '</div>';
     }else{
       var streetview = 'https://maps.googleapis.com/maps/api/streetview?location=' + marker.title + '&key=AIzaSyC4dYdTtAuclPLAGpEg-1UQ947LrilnwkI&size=400x300';
-      $('.infowindowservice .bgimgservice').attr('src', streetview);
-      $('.infowindowservice .address').html(marker.title);
-      content = $('.infowindowservice').html();
+      //infowindow for services
+      var url = "";
+      if(service.url){
+        url = '<div class="url"><a href="' + service.url + '" target="_blank">' + service.url + '</a></div>';
+      }
+      contentString = '<div class="infowindowservice">'+
+        '<div class="address">' + marker.title +'</div>' +
+          '<div class="content">' +
+            '<img class="bgimgservice" alt="Service picture" src="' + streetview +'">' +
+            url +
+          '</div>' +
+        '</div>';
     }
-    //adding content to infowindow
-    infowindow.setContent(content);
+    //adding the content to infowindow
+    infowindow.setContent(contentString);
 
     //adding the infowindow to array to close them all
     this.infowindowArray.push(infowindow);
-
     //open the infowindow
-    if (infowindow.marker != marker) {
-      infowindow.open(this.map, marker);
-    }
-
+    infowindow.open(this.map, marker);
     //close the infowindow
     infowindow.addListener('closeclick', function(){
       infowindow.marker = null;
+      marker.setAnimation(null);
     });
   },
   //closing the infowindows
@@ -820,11 +903,14 @@ var view = {
     for(var i = 0;i < this.infowindowArray.length; i++){
       this.infowindowArray[i].close();
     }
+    for(var i = 0;i < this.markers.length; i++){
+      this.markers[i].setAnimation(null);
+    }
   },
   //showing the services markers
   showServicesMarkers: function(results, service){
     var marker;
-    var infowindow = new google.maps.InfoWindow();
+    this.infowindow = new google.maps.InfoWindow();
     for (var i = 0; i < results.length; i++) {
       var title = results[i].name + " " + results[i].vicinity;
       marker = this.createMarker(this.map,results[i].geometry.location, title, 'images/' + service + '.png', i);
@@ -836,20 +922,20 @@ var view = {
       }else{
         this.shopping_mallMarkers.push(marker);
       }
-      this.createInfowindow(marker, infowindow, null, service);
+      this.createInfowindow(marker, this.infowindow, null, service);
     }
   },
   //showing the beaches
   showBeaches: function(results){
     var marker;
-    var infowindow = new google.maps.InfoWindow();
+    this.infowindow = new google.maps.InfoWindow();
     for (var i = 0; i < results.length; i++) {
         var coords = {lat: results[i].location.lat, lng: results[i].location.lng};
         var title = results[i].name + " " + results[i].location.address + ", " + results[i].location.city + " " + results[i].location.postalCode;
         marker = this.createMarker(this.map, coords, title, 'images/beach.png', i);
         //populating the array
         this.beachesMarkers.push(marker);
-        this.createInfowindow(marker, infowindow, null, "beach");
+        this.createInfowindow(marker, this.infowindow, null, results[i]);
     }
   },
   //hiding the services markers
