@@ -13,23 +13,23 @@
     </head>
     <body data-bind="hotkey: 'esc'">
       <nav id="drawer" class="nav" data-bind="css: {'open': toggleOpen}">
-          <h5>Filter the results:</h5>
-          <div class="search">
-            <input type="text" class="form-control" id="lookup" name="lookup" data-bind="value: filter, valueUpdate: 'afterkeydown'" placeholder="Search"/>
-          </div>
-          <h5>Check to select your favourites houses:</h5>
-          <ul class="selection" data-bind="foreach: filterHouses">
-            <li class="checkbox">
-              <input type="checkbox" data-bind="checked: fav, click:$parent.updatingfavourites">
-              <label class="link" data-bind="text: address, click: $parent.showInfowindow"></label>
-            </li>
-          </ul>
-          <h5>Select the services you want to show:</h5>
-            <ul data-bind="foreach: chosenServices">
-              <li class="checkbox">
-                <input type="checkbox" id="school" data-bind="click: $parent.getServices($data), checked: isSelected"/><label data-bind="text: string"></label>
-              </li>
-            </ul>
+        <h5>Filter the results:</h5>
+        <div class="search">
+          <input type="text" class="form-control" id="lookup" name="lookup" data-bind="value: filter, valueUpdate: 'afterkeydown'" placeholder="Search"/>
+        </div>
+        <h5>Check to select your favourites houses:</h5>
+        <ul class="selection" data-bind="foreach: filterHouses">
+          <li class="checkbox">
+            <input type="checkbox" data-bind="checked: fav, click:$parent.updatingfavourites">
+            <label class="link" data-bind="text: address, click: $parent.showInfowindow"></label>
+          </li>
+        </ul>
+        <h5>Select the services you want to show:</h5>
+        <ul data-bind="foreach: chosenServices">
+          <li class="checkbox">
+            <input type="checkbox" id="school" data-bind="click: $parent.getServices($data), checked: isSelected"/><label data-bind="text: string"></label>
+          </li>
+        </ul>
       </nav>
       <main data-bind="click: removeMenu">
         <!-- using clickBubble: false, is the equivalent in Knockout to stopPropagation -->
@@ -41,7 +41,7 @@
           </a>
         </div>
         <div id="map"></div>
-        <script async defer src="https://maps.googleapis.com/maps/apis/js?libraries=places&key=AIzaSyC4dYdTtAuclPLAGpEg-1UQ947LrilnwkI&v=3&callback=view.initMap" onerror="view.errorMap()"></script>
+        <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyC4dYdTtAuclPLAGpEg-1UQ947LrilnwkI&v=3&callback=view.initMap" onerror="view.errorMap()"></script>
         <!-- Modal -->
         <div class="modal fade" data-bind="showModal: modal">
           <div class="modal-dialog modal-sm">

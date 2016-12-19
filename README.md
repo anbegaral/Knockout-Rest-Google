@@ -20,14 +20,14 @@ The site is built using **Google Maps, Google Places, Google StreetView** and **
 - JQuery
 
 ## How it works
-- When the user loads the page a list of properties are displayed on the panel and the Google map. The user can click on the list of properties and on the markers and the infowindow is opened showing the information about the selected house.
+- When the user loads the page a list of properties are displayed on the panel and the Google map. The user can click on the list of properties and on the markers, and the infowindow is opened showing the information about the selected house.
 - The user can select one house as **favourite** clicking on the checkbox that appears beside the address of the house's list. The marker of the house is automatically update with **Knockout**
 - The user can as well **filter** the list of properties introducing a text to be searched for. The list and the map will be updated with **Knockout**
-- The user can show and hide different services clicking on the checkboxes at the end on the list of properties and open the correspondent infowindow clicking on its marker. These locations are provided by **Google Places** and **Foursquare** for the beaches.
-- The infowindows can be closed clicking on the 'x' button or with the escape key.
+- The user can show and hide different services clicking on the checkboxes at the end on the list of properties and open the correspondent infowindow clicking on its marker. These locations are provided by **Google Places** and **Foursquare** in case of the beaches.
+- The infowindows can be closed clicking on the 'x' button or with the `esc key`.
 
 ##3rd party API FOURSQUARE
-The application is getting data from **FOURSQUARE** for displaying the locations of the nearby beaches, name, address and URL when it is available.
+The application is getting data from **FOURSQUARE** for displaying the nearby services to each house on the correspondent infowindow and the locations of the nearby beaches showing their names, addresses and URLs when they are available.
 
 ##URL Demo
 https://anbegaral.github.io/project5/

@@ -104,6 +104,17 @@ ul li:hover .link {
   text-align: center;
 }
 
+.listvenues {
+    margin-top: 20px;
+    font-weight: 500;
+}
+
+ul li.venues {
+  list-style-type: circle;
+  padding-top: 10px;
+  font-weight: normal;;
+}
+
 .url {
   margin-top: 10px;
 }
