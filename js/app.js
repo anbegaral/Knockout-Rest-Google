@@ -40,7 +40,8 @@ var model = {
             }
           }
         }
-      }
+      },
+      "venues": []
     },
     {
       "id": 7688,
@@ -81,7 +82,8 @@ var model = {
             }
           }
         }
-      }
+      },
+      "venues": []
     },
     {
       "id": 16106,
@@ -122,7 +124,8 @@ var model = {
             }
           }
         }
-      }
+      },
+      "venues": []
     },
     {
       "id": 24070,
@@ -163,7 +166,8 @@ var model = {
             }
           }
         }
-      }
+      },
+      "venues": []
     },
     {
       "id": 25948,
@@ -206,7 +210,8 @@ var model = {
             }
           }
         }
-      }
+      },
+      "venues": []
     },
     {
       "id": 57071,
@@ -247,7 +252,8 @@ var model = {
             }
           }
         }
-      }
+      },
+      "venues": []
     },
     {
       "id": 2235456,
@@ -288,7 +294,8 @@ var model = {
             }
           }
         }
-      }
+      },
+      "venues": []
     },
     {
       "id": 2235495,
@@ -330,7 +337,8 @@ var model = {
             }
           }
         }
-      }
+      },
+      "venues": []
     },
     {
       "id": 2235870,
@@ -371,7 +379,8 @@ var model = {
             }
           }
         }
-      }
+      },
+      "venues": []
     },
     {
       "id": 2235926,
@@ -412,7 +421,8 @@ var model = {
             }
           }
         }
-      }
+      },
+      "venues": []
     },
     {
       "id": 2236010,
@@ -453,12 +463,45 @@ var model = {
             }
           }
         }
-      }
+      },
+      "venues": []
     }
   ],
   //Sets the fav attribute of the given house to true or false
   updatingHouses: function(house){
     house.fav(house.fav());
+  },
+  //Getting the venues near each house from foursquare
+  getFoursquare: function(house){
+    Date.prototype.yyyymmdd = function() {
+      var mm = this.getMonth() + 1; // getMonth() is zero-based
+      var dd = this.getDate();
+      return [this.getFullYear(),
+              (mm > 9 ? '' : '0') + mm,
+              (dd > 9 ? '' : '0') + dd
+             ].join('');
+    };
+
+    var date = new Date();
+      var foursquareURL = 'https://api.foursquare.com/v2/venues/search';
+      $.ajax({
+        url: foursquareURL,
+        method: 'GET',
+        data: {'ll': house.address.latitude + "," + house.address.longitude,
+         'client_id': 'BRBMAYIFF3TVSAJ3AKGSBNXCWYOOLYYZVHRODRYXVIUS4211',
+         'client_secret': 'ZCTIVDJXJEEXNFZ3SBF4JDYH1KXAPDQVS1TBINFNZOCST2VG',
+         'v': date.yyyymmdd(),
+         'limit': 10,
+         'radius': 1000,
+         'intent': 'browse'
+        }
+      }).done(function(data){
+        //adding the venues information to each house
+        for(var i = 0;i < data.response.venues.length;i++){
+          house.venues.push(data.response.venues[i]);
+        }
+        return house;
+     });
   }
 };
 
@@ -476,6 +519,7 @@ var House = function(data){
   this.photos = data.photos;
   this.price = data.price;
   this.fav = ko.observable(false);
+  this.venues = data.venues;
 };
 
 //Create an observable array to used in view and not access directly to model
@@ -486,7 +530,9 @@ var ViewModel = {
 
       //populating the array
       model.houses.forEach(function(house){
-          ViewModel.houseArray.push(new House(house));
+        //calling to get the venues from Fourquare
+        model.getFoursquare(house);
+        ViewModel.houseArray.push(new House(house));
       });
 
       //Updating the model and the marker in the view
@@ -515,10 +561,11 @@ var ViewModel = {
           return done;
       });
 
+      //binding the modal
       this.modalTitle = ko.observable();
       this.modalBody = ko.observable();
       this.modal = ko.observable(false);
-      self.hideModal = function () {
+      this.hideModal = function () {
         self.modal(false);
       };
 
@@ -573,32 +620,32 @@ var ViewModel = {
           };
 
           var date = new Date();
-            var foursquareURL = 'https://api.foursquare.com/v2/venues/search';
-            $.ajax({
-              url: foursquareURL,
-              method: 'GET',
-              data: {'ll': view.map.getCenter().lat() + "," + view.map.getCenter().lng(),
-               'client_id': 'BRBMAYIFF3TVSAJ3AKGSBNXCWYOOLYYZVHRODRYXVIUS4211',
-               'client_secret': 'ZCTIVDJXJEEXNFZ3SBF4JDYH1KXAPDQVS1TBINFNZOCST2VG',
-               'v': date.yyyymmdd(),
-               'limit': 20,
-               'radius': 10000,
-               'categoryId': '4d4b7105d754a06377d81259'
-             }
-           }).done(function(data){
-                if(data.response.venues.length > 0){
-                  view.showBeaches(data.response.venues);
-                //if results length is 0
-                }else{
-                  self.modalTitle('Foursquare results');
-                  self.modalBody('No results.');
-                  self.modal(true);
-                }
-            }).fail(function(){
-              self.modalTitle('Foursquare results');
-              self.modalBody('It is not possible to retrieve the data from Foursquare, an error ocurred.');
-              self.modal(true);
-            });
+          var foursquareURL = 'https://api.foursquare.com/v2/venues/search';
+          $.ajax({
+            url: foursquareURL,
+            method: 'GET',
+            data: {'ll': view.map.getCenter().lat() + "," + view.map.getCenter().lng(),
+             'client_id': 'BRBMAYIFF3TVSAJ3AKGSBNXCWYOOLYYZVHRODRYXVIUS4211',
+             'client_secret': 'ZCTIVDJXJEEXNFZ3SBF4JDYH1KXAPDQVS1TBINFNZOCST2VG',
+             'v': date.yyyymmdd(),
+             'limit': 20,
+             'radius': 10000,
+             'categoryId': '4d4b7105d754a06377d81259'
+            }
+          }).done(function(data){
+              if(data.response.venues.length > 0){
+                view.showBeaches(data.response.venues);
+              //if results length is 0
+              }else{
+                self.modalTitle('Foursquare results');
+                self.modalBody('No results.');
+                self.modal(true);
+              }
+          }).fail(function(){
+            self.modalTitle('Foursquare results');
+            self.modalBody('It is not possible to retrieve the data from Foursquare, an error ocurred.');
+            self.modal(true);
+          });
           //hiding the services if checkbox is unchecked
           }else{
             view.hideServicesMarkers(service.label);
@@ -638,6 +685,7 @@ var newMarker = function(map, position, title, icon, id, type){
   }),
   this.type = type;
 }
+
 var view = {
   map: {},
   markers: [],
@@ -733,7 +781,9 @@ var view = {
   filterMarkers: function(array){
     //hiding all the markers
     for (var i = 0; i < this.markers.length; i++) {
-      this.markers[i].marker.setVisible(false);
+      if(this.markers[i].type === 'house'){
+        this.markers[i].marker.setVisible(false);
+      }
     }
     //showing the filtered markers
     for (var i = 0; i < array.length; i++) {
@@ -747,6 +797,8 @@ var view = {
     //adding infowindow to markers
     objMarker.marker.addListener('click', (function(copyLocations){
       return function(){
+        //closing all the infowindows
+        self.closeInfowindow();
         self.setInfoWindows(this, self.infowindow, copyLocations, service);
         //setting all animations to null and animating the active
         for(var i = 0; i< self.markers.length;i++){
@@ -854,6 +906,17 @@ var view = {
     if(house){
       var streetview = 'https://www.google.com/maps/embed/v1/streetview?location=' + house.lat + ',' + house.lng +'&key=AIzaSyC4dYdTtAuclPLAGpEg-1UQ947LrilnwkI';
       //infowindow for houses
+      var venues = "";
+      var cat = '';
+      for(var i = 0;i < house.venues.length;i++){
+        var name = house.venues[i].name;
+        if(house.venues[i].categories.length > 0){
+          cat = '. Cat. ' + house.venues[i].categories[0].name;
+        }
+        var venAddress = house.venues[i].location.formattedAddress[0];
+        venues = venues + '<li class="venues">' + name + ', ' + venAddress + cat + '</li>';
+        cat = '';
+      }
       contentString = '<div class="infowindow">' +
         '<div class="address">' + house.address +'</div>' +
           '<div class="content">' +
@@ -868,6 +931,11 @@ var view = {
               '</ul>' +
             '</div>'+
             '<div class="description">' + house.description +'</div>' +
+            '<div class="listvenues">Venues provided by Fourquare in 1km:' +
+              '<ul>' +
+                venues +
+              '</ul>' +
+            '</div>' +
             '<div class="street"><iframe src="' + streetview + '" class="view" allowfullscreen>Google Streetview could not be loaded.</iframe></div>' +
           '</div>' +
           '<div class="iw-bottom-gradient"></div>' +
@@ -877,7 +945,8 @@ var view = {
       //infowindow for services
       var url = "";
       if(service.url){
-        url = '<div class="url"><a href="' + service.url + '" target="_blank">' + service.url + '</a></div>';
+        //for some reason the link has to be opened from onclick
+        url = '<div class="url"><a href="#" onClick="window.open(\''+ service.url+'\');return false;" target="window">' + service.url + '</a></div>';
       }
       contentString = '<div class="infowindowservice">'+
         '<div class="address">' + marker.title +'</div>' +
